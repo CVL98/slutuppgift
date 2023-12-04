@@ -16,5 +16,6 @@ namespace slutuppgift.MODELS
         {
             
         }
+        public ICollection<Book> Books { get; set; }
     }
 }

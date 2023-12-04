@@ -15,11 +15,10 @@ namespace slutuppgift.MODELS
         public string FirstName { get; set; }
         [MaxLength(50)]
         public string LastName { get; set; }
-        public bool Card {  get; set; }
-        public string Pin {  get; set; } = (new Random().Next(1000, 9999)).ToString("D4");
         public User()
         {
             
         }
+        public Card Card { get; set; }
     }
 }

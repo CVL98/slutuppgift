@@ -12,14 +12,8 @@ namespace slutuppgift.DATA
     {
         public DbSet<Author> Authors { get; set; }
         public DbSet<Book> Books { get; set; }
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<Book>()
-                .HasKey(b => b.Isbn);
-
-            base.OnModelCreating(modelBuilder);
-        }
         public DbSet<User> Users { get; set; }
+        public DbSet<Card> Cards { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
