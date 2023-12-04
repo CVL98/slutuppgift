@@ -12,7 +12,7 @@ namespace slutuppgift.MODELS
 {
     internal class Book
     {
-        public int ID { get; set; }
+        public int Id { get; set; }
         public Guid Isbn { get; set; }
         [MaxLength(50)]
         public string Title { get; set; }
@@ -22,17 +22,20 @@ namespace slutuppgift.MODELS
         {
             get
             {
-                if (ReturnDate < DateTime.Now) _borrowed = false;
-                return _borrowed;
-            }
-            set
-            {
-                if (!_borrowed)
+                
+                if (!_borrowed && Card!=null)
                 {
                     LoanDate = DateTime.Now;
                     ReturnDate = DateTime.Now.AddDays(14);
-                    _borrowed = value;
                 }
+                if (_borrowed && Card == null)
+                {
+                    LoanDate = null;
+                    ReturnDate = null;
+                }
+                if (Card==null) _borrowed = false;
+                else if (Card!=null) _borrowed = true;
+                return _borrowed;
             }
         }
         private DateTime? _loandate;

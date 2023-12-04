@@ -8,7 +8,7 @@ namespace slutuppgift.MODELS
 {
     internal class Card
     {
-        public int ID {  get; set; }
+        public int Id {  get; set; }
         public string Pin { get; set; } = (new Random().Next(0, 9999)).ToString("D4");
         public ICollection<Book> Books { get; set;}
     }
