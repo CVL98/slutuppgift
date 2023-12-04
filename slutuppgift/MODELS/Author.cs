@@ -9,6 +9,7 @@ namespace slutuppgift.MODELS
 {
     internal class Author
     {
+        [Key]
         public int Id { get; set; }
         [MaxLength(50)]
         public string Name { get; set; }
@@ -16,6 +17,6 @@ namespace slutuppgift.MODELS
         {
             
         }
-        public ICollection<Book> Books { get; set; }
+        public ICollection<Book>? Books { get; set; }
     }
 }

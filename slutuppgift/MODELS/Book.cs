@@ -12,6 +12,7 @@ namespace slutuppgift.MODELS
 {
     internal class Book
     {
+        [Key]
         public int Id { get; set; }
         public Guid Isbn { get; set; }
         [MaxLength(50)]
@@ -68,11 +69,8 @@ namespace slutuppgift.MODELS
                 _grade = value;
             }
         }
-        
-        public int User_Id { get; set; }
-        public User User { get; set; }
-        public ICollection<Author> Authors { get; set; }
-        public int? Card_Id { get; set; }
+        public ICollection<Author>? Authors { get; set; }
+        //public int? Card_Id { get; set; }
         public Card? Card { get; set; }
         public Book()
         {

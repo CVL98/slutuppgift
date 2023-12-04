@@ -12,11 +12,11 @@ namespace slutuppgift
             DataAccess access = new DataAccess();
 
             access.CreateFiller();
-            access.Clear();
+            //access.Clear();
             access.AddLoanCardToPerson(3);
-            access.AddBookIdToPersonLoanCard(3,11);
             access.AddBookToDatabase("Stefan Bok",6,7);
             access.MarkBookAsNotLoaned(11);
+            access.AddBookIdToPersonLoanCard(3,11);
         }
     }
 }

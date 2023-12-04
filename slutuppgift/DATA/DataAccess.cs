@@ -43,7 +43,7 @@ namespace slutuppgift.DATA
 
                     context.Users.Add(user);
                     context.Books.Add(book);
-                    context.Users.Add(user);
+                    context.Authors.Add(author);
                     context.Cards.Add(card);
                 }
                 context.SaveChanges();
@@ -59,7 +59,7 @@ namespace slutuppgift.DATA
                 if (book != null)
                 {
                     // Update LoanCardId to null, marking the book as not loaned
-                    book.Card_Id = null;
+                    book.Card = null; // Card_Id
 
                     // If the book was associated with a LoanCard, remove it from the LoanCard's collection
                     if (book.Card != null)
@@ -112,9 +112,9 @@ namespace slutuppgift.DATA
             using (var context = new Context())
             {
                 // Step 1: Retrieve the Person
-                var person = context.Users.Find(id);
+                var user = context.Users.Find(id);
 
-                if (person == null)
+                if (user == null)
                 {
                     // Handle the case where the person with the specified ID doesn't exist
                     // You can throw an exception, log a message, or take appropriate action
@@ -122,22 +122,22 @@ namespace slutuppgift.DATA
                 }
 
                 // Step 2: Create a new LoanCard
-                var loanCard = new Card();
+                var card = new Card();
 
                 // Step 3: Link the LoanCard to the Person
-                person.Card = loanCard;
+                user.Card = card;
 
                 // Step 4: Save changes to the database
                 context.SaveChanges();
             }
         }
 
-        public void AddBookIdToPersonLoanCard(int personId, int bookId)
+        public void AddBookIdToPersonLoanCard(int userId, int bookId)
         {
             using (var context = new Context())
             {
                 // Step 1: Retrieve the Person with LoanCard
-                var user = context.Users.Include(p => p.Card).SingleOrDefault(p => p.Id == personId);
+                var user = context.Users.Include(p => p.Card).SingleOrDefault(p => p.Id == userId);
 
                 if (user == null)
                 {
@@ -161,7 +161,7 @@ namespace slutuppgift.DATA
                 if (book != null)
                 {
                     // Assuming LoanCardId is the foreign key in the Book entity
-                    book.Card_Id = user.Card.Id;
+                    book.Card = user.Card;
                     context.SaveChanges(); // Save changes to the book
                 }
             }

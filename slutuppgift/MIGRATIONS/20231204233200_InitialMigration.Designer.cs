@@ -12,8 +12,8 @@ using slutuppgift.DATA;
 namespace slutuppgift.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20231130213209_initialize3")]
-    partial class initialize3
+    [Migration("20231204233200_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -30,12 +30,12 @@ namespace slutuppgift.Migrations
                     b.Property<int>("AuthorsId")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("BooksIsbn")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("BooksId")
+                        .HasColumnType("int");
 
-                    b.HasKey("AuthorsId", "BooksIsbn");
+                    b.HasKey("AuthorsId", "BooksId");
 
-                    b.HasIndex("BooksIsbn");
+                    b.HasIndex("BooksId");
 
                     b.ToTable("AuthorBook");
                 });
@@ -60,15 +60,20 @@ namespace slutuppgift.Migrations
 
             modelBuilder.Entity("slutuppgift.MODELS.Book", b =>
                 {
-                    b.Property<Guid>("Isbn")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
 
-                    b.Property<bool>("Borrowed")
-                        .HasColumnType("bit");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CardId")
+                        .HasColumnType("int");
 
                     b.Property<int>("Grade")
                         .HasColumnType("int");
+
+                    b.Property<Guid>("Isbn")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("LoanDate")
                         .HasColumnType("datetime2");
@@ -81,20 +86,31 @@ namespace slutuppgift.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("User_Id")
-                        .HasColumnType("int");
-
                     b.Property<int>("Year")
                         .HasColumnType("int");
 
-                    b.HasKey("Isbn");
+                    b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("CardId");
 
                     b.ToTable("Books");
+                });
+
+            modelBuilder.Entity("slutuppgift.MODELS.Card", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Pin")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Cards");
                 });
 
             modelBuilder.Entity("slutuppgift.MODELS.User", b =>
@@ -105,8 +121,8 @@ namespace slutuppgift.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<bool>("Card")
-                        .HasColumnType("bit");
+                    b.Property<int?>("CardId")
+                        .HasColumnType("int");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
@@ -118,11 +134,9 @@ namespace slutuppgift.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("Pin")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
+
+                    b.HasIndex("CardId");
 
                     b.ToTable("Users");
                 });
@@ -137,23 +151,30 @@ namespace slutuppgift.Migrations
 
                     b.HasOne("slutuppgift.MODELS.Book", null)
                         .WithMany()
-                        .HasForeignKey("BooksIsbn")
+                        .HasForeignKey("BooksId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
             modelBuilder.Entity("slutuppgift.MODELS.Book", b =>
                 {
-                    b.HasOne("slutuppgift.MODELS.User", "User")
+                    b.HasOne("slutuppgift.MODELS.Card", "Card")
                         .WithMany("Books")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CardId");
 
-                    b.Navigation("User");
+                    b.Navigation("Card");
                 });
 
             modelBuilder.Entity("slutuppgift.MODELS.User", b =>
+                {
+                    b.HasOne("slutuppgift.MODELS.Card", "Card")
+                        .WithMany()
+                        .HasForeignKey("CardId");
+
+                    b.Navigation("Card");
+                });
+
+            modelBuilder.Entity("slutuppgift.MODELS.Card", b =>
                 {
                     b.Navigation("Books");
                 });
