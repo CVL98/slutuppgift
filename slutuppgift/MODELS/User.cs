@@ -12,14 +12,12 @@ namespace slutuppgift.MODELS
     {
         [Key]
         public int Id { get; set; }
+
         [MaxLength(50)]
         public string FirstName { get; set; }
         [MaxLength(50)]
         public string LastName { get; set; }
-        public User()
-        {
-            
-        }
+
         public Card? Card { get; set; }
     }
 }

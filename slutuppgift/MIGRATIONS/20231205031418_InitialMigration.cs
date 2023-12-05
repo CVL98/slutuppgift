@@ -46,9 +46,9 @@ namespace slutuppgift.Migrations
                     Isbn = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Year = table.Column<int>(type: "int", nullable: false),
+                    Rating = table.Column<int>(type: "int", nullable: false),
                     LoanDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ReturnDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Grade = table.Column<int>(type: "int", nullable: false),
                     CardId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>

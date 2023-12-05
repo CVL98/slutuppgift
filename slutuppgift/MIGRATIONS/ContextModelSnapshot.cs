@@ -66,14 +66,14 @@ namespace slutuppgift.Migrations
                     b.Property<int?>("CardId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Grade")
-                        .HasColumnType("int");
-
                     b.Property<Guid>("Isbn")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("LoanDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ReturnDate")
                         .HasColumnType("datetime2");

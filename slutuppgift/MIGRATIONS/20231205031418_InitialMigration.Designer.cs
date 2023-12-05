@@ -12,7 +12,7 @@ using slutuppgift.DATA;
 namespace slutuppgift.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20231204233200_InitialMigration")]
+    [Migration("20231205031418_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -69,14 +69,14 @@ namespace slutuppgift.Migrations
                     b.Property<int?>("CardId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Grade")
-                        .HasColumnType("int");
-
                     b.Property<Guid>("Isbn")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("LoanDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ReturnDate")
                         .HasColumnType("datetime2");

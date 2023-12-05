@@ -11,7 +11,9 @@ namespace slutuppgift.MODELS
     {
         [Key]
         public int Id {  get; set; }
-        public string Pin { get; set; } = (new Random().Next(0, 9999)).ToString("D4");
+
+        public string Pin { get; set; }
+
         public ICollection<Book>? Books { get; set;}
     }
 }
