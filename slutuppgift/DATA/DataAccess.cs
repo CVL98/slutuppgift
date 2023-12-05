@@ -24,10 +24,11 @@ namespace slutuppgift.DATA
         public static void menu()
         {
             Console.WriteLine("1. Fill 10");
-            Console.WriteLine("2. Add new user");
+            Console.WriteLine("2. Add new author");
             Console.WriteLine("3. Add new book");
-            Console.WriteLine("4. Borrow a book");
-            Console.WriteLine("5. Return a book");
+            Console.WriteLine("4. Add new user");
+            Console.WriteLine("5. Borrow a book");
+            Console.WriteLine("6. Return a book");
         }
         public void NewBook()
         {
@@ -139,6 +140,18 @@ namespace slutuppgift.DATA
 
                 context.SaveChanges();
             }
+        }
+        public void NewAuthor(string fullname)
+        {
+            using (var context = new Context())
+            {
+                Author author = new Author();
+                author.Name = fullname;
+
+                context.Authors.Add(author);
+                context.SaveChanges();
+            }
+
         }
 
         public void NewUserCard(int id)

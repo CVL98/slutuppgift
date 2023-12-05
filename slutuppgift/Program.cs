@@ -36,7 +36,7 @@ namespace slutuppgift
                         DataAccess.menu();
                         Console.WriteLine("\n10 users, authors and books added");
                         break; //Fill 10
-                    case 2:
+                    case 4:
                         Console.Write("\nEnter User surname:");
                         var surname = Console.ReadLine();
                         Console.Write("\nEnter User lastname:");
@@ -115,7 +115,7 @@ namespace slutuppgift
                             Console.Write(" added.\n");
                         }
                         break; //Enter book
-                    case 4:
+                    case 5:
                         using (var context = new Context())
                         {
                             var users = context.Users;
@@ -157,7 +157,7 @@ namespace slutuppgift
                         DataAccess.menu();
                         Console.WriteLine("\n Book borrowed");
                         break; //Borrow Book
-                    case 5:
+                    case 6:
                         using (var context = new Context())
                         {
                             var booksWithCardId = context.Books.Where(book => book.Card != null);
@@ -184,7 +184,22 @@ namespace slutuppgift
                         DataAccess.menu();
                         Console.WriteLine("\n Book returned");
                         break; //Return Book
-                        
+                    case 2:
+                        Console.Write("\nEnter author fullname:");
+                        var fullname = Console.ReadLine();
+                        if (fullname.IsNullOrEmpty())
+                        {
+                            Console.Clear();
+                            DataAccess.menu();
+                            Console.WriteLine("\nInvalid name");
+                            break;
+                        }
+                        access.NewAuthor(fullname);
+                        Console.Clear();
+                        DataAccess.menu();
+                        Console.WriteLine($"\nAuthor \"{fullname}\" added.");
+                        break; //Enter Author
+
                     case 0:
                         Console.WriteLine("Exiting...");
                         break;
