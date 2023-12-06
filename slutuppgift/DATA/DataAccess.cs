@@ -210,13 +210,27 @@ namespace slutuppgift.DATA
         {
             using (var context = new Context())
             {
-                var user = context.Users.Find(userId);
+                var user = context.Users.Include(p => p.Card).SingleOrDefault(p => p.Id == userId);
 
                 if (user == null)
                 {
                     Console.WriteLine("User:404");
                     return false;
                 }
+                var books = context.Books.Where(b => b.Card == user.Card).ToList();
+                foreach (var book in books)
+                {
+                    book.Borrowed = false;
+                    book.LoanDate = null;
+                    book.ReturnDate = null;
+                }
+                if (user.Card != null)
+                {
+                    
+                    context.Cards.Remove(user.Card);
+
+                }
+
                 context.Users.Remove(user);
                 context.SaveChanges();
                 return true;

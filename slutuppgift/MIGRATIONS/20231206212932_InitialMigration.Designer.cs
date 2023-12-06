@@ -12,7 +12,7 @@ using slutuppgift.DATA;
 namespace slutuppgift.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20231206142839_InitialMigration")]
+    [Migration("20231206212932_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
