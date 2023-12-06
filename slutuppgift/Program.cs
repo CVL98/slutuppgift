@@ -13,19 +13,11 @@ namespace slutuppgift
             //Console.WriteLine("Hello, World!");
 
             DataAccess access = new DataAccess();
-
-            //access.Fill(10);
-            //access.clearTables();
-            //access.NewUserCard(3);
-            //access.NewBook("Stefan Bok",6,7);
-            //access.ReturnBook(9);
-            //access.BorrowBook(6,9);
-
             int choice;
             DataAccess.menu();
             do
             {
-                Console.WriteLine("\nEnter your choice (0 to exit):");
+                Console.WriteLine("\nEnter your choice (0 or empty to exit):");
                 int.TryParse(Console.ReadLine(), out choice);
 
                 switch (choice)
@@ -57,17 +49,7 @@ namespace slutuppgift
                         Console.Write("\nEnter book title:");
                         var title = Console.ReadLine();
 
-                        using (var context = new Context())
-                        {
-                            var authors = context.Authors;
-                            var counter = 0;
-                            foreach (var author in authors)
-                            {
-                                counter++;
-                                Console.Write($"{author.Id,-2}. {author.Name,-19}");
-                                if (counter % 3 == 0) Console.WriteLine();
-                            }
-                        }
+                        access.ListAuthors();
 
                         Console.Write("\nEnter book author(s):");
                         var authorIds = Console.ReadLine();
@@ -115,32 +97,33 @@ namespace slutuppgift
                             Console.Write(" added.\n");
                         }
                         break; //Enter book
-                    case 5:
-                        using (var context = new Context())
-                        {
-                            var users = context.Users;
-                            var counter = 0;
-                            Console.WriteLine();
-                            foreach (var user in users)
-                            {
-                                counter++;
-                                Console.Write($"{user.Id,-2}. {user.FirstName,-11} {user.LastName,-11}");
-                                if (counter % 2 == 0) Console.WriteLine();
-                            }
-                        }
+                    case 6:
+                        Console.Clear();
+                        DataAccess.menu();
+                        Console.WriteLine();
+                        access.ListUsers();
+
                         Console.Write("\nEnter User id:");
                         int.TryParse(Console.ReadLine(), out var userid);
                         Console.Clear();
+                        DataAccess.menu();
+                        Console.WriteLine();
                         using (var context = new Context())
                         {
-                            var books = context.Books;
+                            var booksWithCardId = context.Books.Where(book => book.Card == null);
+                            if (booksWithCardId.Count() == 0)
+                            {
+                                Console.WriteLine("No books are available.");
+                                break;
+                            }
                             var counter = 0;
-                            foreach (var book in books)
+                            foreach (var book in booksWithCardId)
                             {
                                 counter++;
-                                Console.Write($"{book.Id,-2}. {book.Title,-39}");
+                                Console.Write($"{book.Id,3}. {book.Title,-36}");
                                 if (counter % 2 == 0) Console.WriteLine();
                             }
+                            if (booksWithCardId.Count()%2 != 0) Console.WriteLine();
                         }
                         Console.Write("\nEnter book id:");
                         int.TryParse(Console.ReadLine(), out var bookid);
@@ -150,27 +133,39 @@ namespace slutuppgift
                             Console.Clear();
                             DataAccess.menu();
                             Console.WriteLine("\nInvalid user or book id");
+                            break;
                         }
 
-                        access.BorrowBook(userid, bookid);
                         Console.Clear();
                         DataAccess.menu();
-                        Console.WriteLine("\n Book borrowed");
+                        if (access.BorrowBook(userid, bookid))
+                        {
+                            Console.WriteLine("\n Book borrowed");
+                            break;
+                        }
                         break; //Borrow Book
-                    case 6:
+                    case 7:
+                        Console.Clear();
+                        DataAccess.menu();
+                        Console.WriteLine();
                         using (var context = new Context())
                         {
                             var booksWithCardId = context.Books.Where(book => book.Card != null);
-
+                            if (booksWithCardId.Count() == 0)
+                            {
+                                Console.WriteLine("No books are borrowed.");
+                                break;
+                            }
                             var counter = 0;
                             foreach (var book in booksWithCardId)
                             {
                                 counter++;
-                                Console.Write($"{book.Id,-2}. {book.Title,-39}");
+                                Console.Write($"{book.Id,3}. {book.Title,-36}");
                                 if (counter % 2 == 0) Console.WriteLine();
                             }
+                            if (booksWithCardId.Count() % 2 != 0) Console.WriteLine();
                         }
-                        Console.Write("\nEnter book id:");
+                        Console.Write("\nSelect book to return:");
                         int.TryParse(Console.ReadLine(), out var rebookid);
                         if (rebookid == 0)
                         {
@@ -199,6 +194,123 @@ namespace slutuppgift
                         DataAccess.menu();
                         Console.WriteLine($"\nAuthor \"{fullname}\" added.");
                         break; //Enter Author
+                    case 8:
+                        Console.Clear();
+                        DataAccess.menu();
+                        Console.WriteLine("\nRemove Author[1], Book[2], User[3] or clear all[4]?");
+                        if (!int.TryParse(Console.ReadLine(), out int selection))
+                        {
+                            Console.WriteLine("Invalid.");
+                            break;
+                        }
+                        switch (selection)
+                        {
+                            case 1:
+                                Console.Clear();
+                                DataAccess.menu();
+                                access.ListAuthors();
+                                Console.Write($"\nSelect author to remove:");
+                                if (!int.TryParse(Console.ReadLine(), out int author_id))
+                                {
+                                    Console.Clear();
+                                    DataAccess.menu();
+                                    Console.WriteLine();
+                                    Console.WriteLine("Invalid author id.");
+                                    break;
+                                }
+                                Console.Clear();
+                                DataAccess.menu();
+                                Console.WriteLine();
+                                if (!access.RemoveAuthor(author_id)) Console.WriteLine("Author not found.");
+                                else Console.WriteLine("Author removed.");
+                                break;
+                            case 2:
+                                Console.Clear();
+                                DataAccess.menu();
+                                access.ListBooks();
+                                Console.Write($"\nSelect book to remove:");
+                                if (!int.TryParse(Console.ReadLine(), out int book_id))
+                                {
+                                    Console.Clear();
+                                    DataAccess.menu();
+                                    Console.WriteLine();
+                                    Console.WriteLine("Invalid book id.");
+                                    break;
+                                }
+                                Console.Clear();
+                                DataAccess.menu();
+                                Console.WriteLine();
+                                if (!access.RemoveBook(book_id)) Console.WriteLine("Book not found.");
+                                else Console.WriteLine("Book removed.");
+                                break;
+                            case 3:
+                                Console.Clear();
+                                DataAccess.menu();
+                                access.ListUsers();
+
+                                Console.Write($"\nSelect user to remove:");
+                                if (!int.TryParse(Console.ReadLine(), out int user_id))
+                                {
+                                    Console.Clear();
+                                    DataAccess.menu();
+                                    Console.WriteLine();
+                                    Console.WriteLine("Invalid user id.");
+                                    break;
+                                }
+                                Console.Clear();
+                                DataAccess.menu();
+                                Console.WriteLine();
+                                if (!access.RemoveUser(user_id)) Console.WriteLine("User not found.");
+                                else Console.WriteLine("User removed.");
+                                break;
+                            case 4:
+                                access.RemoveAll();
+                                Console.Clear();
+                                DataAccess.menu();
+                                Console.WriteLine("\nAll data cleared.");
+                                break;
+                        }
+                        break; //Remove Data
+                    case 5:
+                        Console.Clear();
+                        DataAccess.menu();
+                        Console.WriteLine("\nList Authors[1], Books[2], Users[3] or all[4]?");
+                        if (!int.TryParse(Console.ReadLine(), out int listchoice))
+                        {
+                            Console.WriteLine("Invalid.");
+                            break;
+                        }
+                        switch (listchoice)
+                        {
+                            case 1:
+                                Console.Clear();
+                                DataAccess.menu();
+                                access.ListAuthors();
+                                break;
+                            case 2:
+                                Console.Clear();
+                                DataAccess.menu();
+                                access.ListBooks();
+                                break;
+                            case 3:
+                                Console.Clear();
+                                DataAccess.menu();
+                                access.ListUsers();
+                                break;
+                            case 4:
+                                Console.Clear();
+                                DataAccess.menu();
+                                Console.WriteLine("\nAuthors:");
+                                access.ListAuthors();
+                                Console.WriteLine("\nBooks:");
+                                access.ListBooks();
+                                Console.WriteLine("\nUsers:");
+                                access.ListUsers();
+                                Console.WriteLine();
+                                DataAccess.menu();
+                                break;
+                        }
+                        break; //List Data
 
                     case 0:
                         Console.WriteLine("Exiting...");

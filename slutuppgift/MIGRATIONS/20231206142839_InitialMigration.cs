@@ -47,6 +47,7 @@ namespace slutuppgift.Migrations
                     Title = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Year = table.Column<int>(type: "int", nullable: false),
                     Rating = table.Column<int>(type: "int", nullable: false),
+                    Borrowed = table.Column<bool>(type: "bit", nullable: false),
                     LoanDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ReturnDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     CardId = table.Column<int>(type: "int", nullable: true)

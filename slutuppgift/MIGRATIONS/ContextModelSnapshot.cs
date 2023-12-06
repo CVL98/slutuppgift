@@ -63,6 +63,9 @@ namespace slutuppgift.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<bool>("Borrowed")
+                        .HasColumnType("bit");
+
                     b.Property<int?>("CardId")
                         .HasColumnType("int");
 

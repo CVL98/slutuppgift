@@ -12,7 +12,7 @@ using slutuppgift.DATA;
 namespace slutuppgift.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20231205031418_InitialMigration")]
+    [Migration("20231206142839_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -65,6 +65,9 @@ namespace slutuppgift.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Borrowed")
+                        .HasColumnType("bit");
 
                     b.Property<int?>("CardId")
                         .HasColumnType("int");
