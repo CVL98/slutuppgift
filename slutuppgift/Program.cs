@@ -1,10 +1,6 @@
-﻿using Helpers;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Microsoft.Identity.Client;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using slutuppgift.DATA;
-using slutuppgift.MODELS;
 
 namespace slutuppgift
 {
@@ -43,18 +39,16 @@ namespace slutuppgift
                         DataAccess.Home($"\nUser \"{surname} {lastname}\" added.");
                         break; //Enter user
                     case 3:
-                        Console.Write("\nEnter book title:");
+                        DataAccess.Home("Enter book title:");
                         var title = Console.ReadLine();
 
+                        DataAccess.Home("");
                         access.ListAuthors();
-
                         Console.Write("\nEnter book author(s):");
                         var authorIds = Console.ReadLine();
                         if (title.IsNullOrEmpty() || authorIds.IsNullOrEmpty())
                         {
-                            Console.Clear();
-                            DataAccess.menu();
-                            Console.WriteLine("\nInvalid book");
+                            DataAccess.Home("Invalid book");
                             break;
                         }
                         char[] separators = new char[] { ' ', ',' };

@@ -12,8 +12,8 @@ using slutuppgift.DATA;
 namespace slutuppgift.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20231207171442_initial")]
-    partial class initial
+    [Migration("20231207175458_initialmigration")]
+    partial class initialmigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

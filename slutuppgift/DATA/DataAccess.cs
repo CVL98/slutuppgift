@@ -1,16 +1,8 @@
 ﻿using Helpers;
 using Microsoft.EntityFrameworkCore;
 using slutuppgift.MODELS;
-using System.Security.Cryptography;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Channels;
-using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace slutuppgift.DATA
 {
