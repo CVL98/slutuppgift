@@ -26,9 +26,7 @@ namespace slutuppgift
                 {
                     case 1:
                         access.Fill(10);
-                        Console.Clear();
-                        DataAccess.menu();
-                        Console.WriteLine("\n10 users, authors and books added");
+                        DataAccess.Home("10 users, authors and books added");
                         break; //Fill 10
                     case 4:
                         Console.Write("\nEnter User surname:");
@@ -38,15 +36,11 @@ namespace slutuppgift
                         Console.Write("\nCreate User pin:");
                         if (surname.IsNullOrEmpty() || lastname.IsNullOrEmpty() || !int.TryParse(Console.ReadLine(), out int pin))
                         {
-                            Console.Clear();
-                            DataAccess.menu();
-                            Console.WriteLine("\nInvalid name or pin");
+                            DataAccess.Home("Invalid name or pin");
                             break;
                         }
-                        access.NewUser(surname, lastname,pin);
-                        Console.Clear();
-                        DataAccess.menu();
-                        Console.WriteLine($"\nUser \"{surname} {lastname}\" added.");
+                        access.NewUser(surname, lastname, pin);
+                        DataAccess.Home($"\nUser \"{surname} {lastname}\" added.");
                         break; //Enter user
                     case 3:
                         Console.Write("\nEnter book title:");
@@ -74,9 +68,7 @@ namespace slutuppgift
                             }
                             else
                             {
-                                Console.Clear();
-                                DataAccess.menu();
-                                Console.WriteLine("\nInvalid author Id");
+                                DataAccess.Home("Invalid author Id");
                                 invalidInput = true;
                                 break;
                             }
@@ -84,8 +76,7 @@ namespace slutuppgift
                         if (invalidInput) break;
 
                         access.NewBook(title, Ids);
-                        Console.Clear();
-                        DataAccess.menu();
+                        DataAccess.Home("");
 
                         using (var context = new Context())
                         {
@@ -101,16 +92,12 @@ namespace slutuppgift
                         }
                         break; //Enter book
                     case 7:
-                        Console.Clear();
-                        DataAccess.menu();
-                        Console.WriteLine();
+                        DataAccess.Home("");
                         access.ListUsers();
 
                         Console.Write("\nEnter User id:");
                         int.TryParse(Console.ReadLine(), out var userid);
-                        Console.Clear();
-                        DataAccess.menu();
-                        Console.WriteLine();
+                        DataAccess.Home("");
                         using (var context = new Context())
                         {
                             var booksWithCardId = context.Books.Where(book => book.Card == null);
@@ -126,31 +113,26 @@ namespace slutuppgift
                                 Console.Write($"{book.Id,3}. {book.Title,-36}");
                                 if (counter % 2 == 0) Console.WriteLine();
                             }
-                            if (booksWithCardId.Count()%2 != 0) Console.WriteLine();
+                            if (booksWithCardId.Count() % 2 != 0) Console.WriteLine();
                         }
                         Console.Write("\nEnter book id:");
                         int.TryParse(Console.ReadLine(), out var bookid);
 
                         if (userid == 0 || bookid == 0)
                         {
-                            Console.Clear();
-                            DataAccess.menu();
-                            Console.WriteLine("\nInvalid user or book id");
+                            DataAccess.Home("Invalid user or book id");
                             break;
                         }
 
-                        Console.Clear();
-                        DataAccess.menu();
+                        DataAccess.Home("");
                         if (access.BorrowBook(userid, bookid))
                         {
-                            Console.WriteLine("\n Book borrowed");
+                            Console.WriteLine("Book borrowed");
                             break;
                         }
                         break; //Borrow Book
                     case 8:
-                        Console.Clear();
-                        DataAccess.menu();
-                        Console.WriteLine();
+                        DataAccess.Home("");
                         using (var context = new Context())
                         {
                             var booksWithCardId = context.Books.Where(book => book.Card != null);
@@ -172,18 +154,15 @@ namespace slutuppgift
                         int.TryParse(Console.ReadLine(), out var rebookid);
                         if (rebookid == 0)
                         {
-                            Console.Clear();
-                            DataAccess.menu();
-                            Console.WriteLine("\nInvalid book id");
+                            DataAccess.Home("Invalid book id.");
                             break;
                         }
                         access.ReturnBook(rebookid);
-                        Console.Clear();
-                        DataAccess.menu();
-                        Console.WriteLine("\n Book returned");
+                        DataAccess.Home("Book returned");
                         break; //Return Book
                     case 2:
-                        Console.Write("\nEnter author fullname:");
+                        DataAccess.Home("");
+                        Console.Write("Enter author fullname:");
                         var fullname = Console.ReadLine();
                         if (fullname.IsNullOrEmpty())
                         {
@@ -193,9 +172,7 @@ namespace slutuppgift
                             break;
                         }
                         access.NewAuthor(fullname);
-                        Console.Clear();
-                        DataAccess.menu();
-                        Console.WriteLine($"\nAuthor \"{fullname}\" added.");
+                        DataAccess.Home($"\nAuthor \"{fullname}\" added.");
                         break; //Enter Author
                     case 9:
                         Console.Clear();
@@ -203,17 +180,13 @@ namespace slutuppgift
                         Console.WriteLine("\nRemove Author[1], Book[2], User[3] or clear all[4]?");
                         if (!int.TryParse(Console.ReadLine(), out int selection))
                         {
-                            Console.Clear();
-                            DataAccess.menu();
-                            Console.WriteLine();
-                            Console.WriteLine("Invalid.");
+                            DataAccess.Home("Invalid.");
                             break;
                         }
                         switch (selection)
                         {
                             case 1:
-                                Console.Clear();
-                                DataAccess.menu();
+                                DataAccess.Home("");
                                 access.ListAuthors();
                                 Console.Write($"\nSelect author to remove:");
                                 if (!int.TryParse(Console.ReadLine(), out int author_id))
@@ -224,62 +197,43 @@ namespace slutuppgift
                                     Console.WriteLine("Invalid author id.");
                                     break;
                                 }
-                                Console.Clear();
-                                DataAccess.menu();
-                                Console.WriteLine();
+                                DataAccess.Home("");
                                 if (!access.RemoveAuthor(author_id)) Console.WriteLine("Author not found.");
                                 else Console.WriteLine("Author removed.");
                                 break;
                             case 2:
-                                Console.Clear();
-                                DataAccess.menu();
+                                DataAccess.Home("");
                                 access.ListBooks();
                                 Console.Write($"\nSelect book to remove:");
                                 if (!int.TryParse(Console.ReadLine(), out int book_id))
                                 {
-                                    Console.Clear();
-                                    DataAccess.menu();
-                                    Console.WriteLine();
-                                    Console.WriteLine("Invalid book id.");
+                                    DataAccess.Home("Invalid book id.");
                                     break;
                                 }
-                                Console.Clear();
-                                DataAccess.menu();
-                                Console.WriteLine();
+                                DataAccess.Home("");
                                 if (!access.RemoveBook(book_id)) Console.WriteLine("Book not found.");
                                 else Console.WriteLine("Book removed.");
                                 break;
                             case 3:
-                                Console.Clear();
-                                DataAccess.menu();
+                                DataAccess.Home("");
                                 access.ListUsers();
 
                                 Console.Write($"\nSelect user to remove:");
                                 if (!int.TryParse(Console.ReadLine(), out int user_id))
                                 {
-                                    Console.Clear();
-                                    DataAccess.menu();
-                                    Console.WriteLine();
-                                    Console.WriteLine("Invalid user id.");
+                                    DataAccess.Home("Invalid user id");
                                     break;
                                 }
-                                Console.Clear();
-                                DataAccess.menu();
-                                Console.WriteLine();
+                                DataAccess.Home("");
                                 if (!access.RemoveUser(user_id)) Console.WriteLine("User not found.");
                                 else Console.WriteLine("User removed.");
                                 break;
                             case 4:
                                 access.RemoveAll();
-                                Console.Clear();
-                                DataAccess.menu();
-                                Console.WriteLine("\nAll data cleared.");
+                                DataAccess.Home("All data cleared.");
                                 break;
                             default:
-                                Console.Clear();
-                                DataAccess.menu();
-                                Console.WriteLine();
-                                Console.WriteLine("Invalid option.");
+                                DataAccess.Home("Invalid option");
                                 break;
                         }
                         break; //Remove Data
@@ -289,32 +243,25 @@ namespace slutuppgift
                         Console.WriteLine("\nList Authors[1], Books[2], Users[3] or all[4]?");
                         if (!int.TryParse(Console.ReadLine(), out int listchoice))
                         {
-                            Console.Clear();
-                            DataAccess.menu();
-                            Console.WriteLine();
-                            Console.WriteLine("Invalid.");
+                            DataAccess.Home("Invalid.");
                             break;
                         }
                         switch (listchoice)
                         {
                             case 1:
-                                Console.Clear();
-                                DataAccess.menu();
+                                DataAccess.Home("");
                                 access.ListAuthors();
                                 break;
                             case 2:
-                                Console.Clear();
-                                DataAccess.menu();
+                                DataAccess.Home("");
                                 access.ListBooks();
                                 break;
                             case 3:
-                                Console.Clear();
-                                DataAccess.menu();
+                                DataAccess.Home("");
                                 access.ListUsers();
                                 break;
                             case 4:
-                                Console.Clear();
-                                DataAccess.menu();
+                                DataAccess.Home("");
                                 Console.WriteLine("\nAuthors:");
                                 access.ListAuthors();
                                 Console.WriteLine("\nBooks:");
@@ -325,49 +272,36 @@ namespace slutuppgift
                                 DataAccess.menu();
                                 break;
                             default:
-                                Console.Clear();
-                                DataAccess.menu();
-                                Console.WriteLine();
-                                Console.WriteLine("Invalid option.");
+                                DataAccess.Home("Invalid option.");
                                 break;
                         }
                         break; //List Data
                     case 6:
-                        Console.Clear();
-                        DataAccess.menu();
-                        Console.WriteLine();
-                        access.ListUsers();
-
-                        Console.Write("\nEnter User id:");
-                        int.TryParse(Console.ReadLine(), out var userId);
-                        Console.Clear();
-                        DataAccess.menu();
-                        Console.WriteLine();
-                        if (userId == 0)
-                        {
-                            Console.Clear();
-                            DataAccess.menu();
-                            Console.WriteLine("\nInvalid user id");
-                            break;
-                        }
-                        Console.Write("Enter pin:");
-                        var password = Console.ReadLine();
-
                         using (var context = new Context())
                         {
+                            DataAccess.Home("");
+                            access.ListUsers();
+
+                            Console.Write("\nEnter User id:");
+                            int.TryParse(Console.ReadLine(), out var userId);
                             var user = context.Users.Include(c => c.Card).SingleOrDefault(p => p.Id == userId);
+                            if (user == null)
+                            {
+                                DataAccess.Home("Invalid user id.");
+                                break;
+                            }
+                            DataAccess.Home("Enter pin:");
+                            var password = Console.ReadLine();
+
+
+
                             var books = context.Books.Include(c => c.Card).Where(b => b.Card.Id == user.Card.Id);
                             if (DataAccess.Decrypt(user.Card.Pin) != password)
                             {
-                                Console.Clear();
-                                DataAccess.menu();
-                                Console.WriteLine();
-                                Console.WriteLine("Invalid pin.");
+                                DataAccess.Home("Invalid pin."); ;
                                 break;
                             }
-                            Console.Clear();
-                            DataAccess.menu();
-                            Console.WriteLine();
+                            DataAccess.Home("");
                             Console.WriteLine($"{"User id:",-9} {user.Id}");
                             Console.WriteLine($"{"Surname:",-9} {user.FirstName}");
                             Console.WriteLine($"{"Lastname:",-9} {user.LastName}");
@@ -378,7 +312,7 @@ namespace slutuppgift
                                 Console.Write($"({book.Id}) {book.Title}, ");
                             }
                         }
-                            break; //View user data
+                        break; //View user data
 
                     case 0:
                         Console.WriteLine("Exiting...");

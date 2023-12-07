@@ -29,7 +29,7 @@ namespace slutuppgift.DATA
         public static void menu()
         {
 
-            Console.WriteLine("\n1. Fill 10");
+            Console.WriteLine("\n1. Fill 10---------------");
             Console.WriteLine("2. Add new author--------");
             Console.WriteLine("3. Add new book----------");
             Console.WriteLine("4. Add new user----------");
@@ -40,6 +40,13 @@ namespace slutuppgift.DATA
             Console.WriteLine("9. Remove data---[opions]");
             
 
+        }
+        public static void Home(string text)
+        {
+            Console.Clear();
+            menu();
+            Console.WriteLine();
+            if (text!=null || text!="") Console.Write(text+"\n");
         }
 
         public void Fill(int number)
@@ -336,6 +343,7 @@ namespace slutuppgift.DATA
 
         public static string Encrypt(string text)
         {
+            if (text == null) return null;
             string key = "thisisnotakey";
             byte[] textBytes = Encoding.UTF8.GetBytes(text);
             byte[] keyBytes = Encoding.UTF8.GetBytes(key);
@@ -349,6 +357,7 @@ namespace slutuppgift.DATA
         }
         public static string Decrypt(string text)
         {
+            if (text == null) return null;
             string key = "thisisnotakey";
             byte[] textBytes = Convert.FromBase64String(text);
             byte[] keyBytes = Encoding.UTF8.GetBytes(key);
