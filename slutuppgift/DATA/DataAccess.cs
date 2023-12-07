@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using slutuppgift.MODELS;
 using System.ComponentModel;
+using System.Net;
 using System.Text;
 
 namespace slutuppgift.DATA
@@ -9,7 +10,7 @@ namespace slutuppgift.DATA
     internal class DataAccess
     {
         csSeedGenerator rnd = new csSeedGenerator();
-        
+
 
         public enum BookTitles
         {
@@ -30,7 +31,7 @@ namespace slutuppgift.DATA
             Console.WriteLine("7. Borrow a book---------");
             Console.WriteLine("8. Return a book---------");
             Console.WriteLine("9. Remove data---[opions]");
-            
+
 
         }
         public static void Home(string text)
@@ -38,7 +39,7 @@ namespace slutuppgift.DATA
             Console.Clear();
             menu();
             Console.WriteLine();
-            if (text!=null || text!="") Console.Write(text+"\n");
+            if (text != null || text != "") Console.Write(text + "\n");
         }
 
         public void Fill(int number)
@@ -58,14 +59,19 @@ namespace slutuppgift.DATA
         {
             using (var context = new Context())
             {
-                var authors = context.Authors;
+                var authors = context.Authors.ToList();
                 var counter = 0;
                 Console.WriteLine();
                 foreach (var author in authors)
                 {
+                    var books = context.Books.Include(b => b.Authors).Where(b => b.Authors.Any(a => a.Id == author.Id));
                     counter++;
-                    Console.Write($"Author:{author.Id,3}. {author.Name,-19}");
-                    if (counter % 3 == 0) Console.WriteLine();
+                    Console.Write($"Author:{author.Id,3}. {author.Name,-19} Books: ");
+                    foreach (var book in books)
+                    {
+                        Console.Write($"({book.Id}), ");
+                    }
+                    if (counter % 1 == 0) Console.WriteLine();
                 }
             }
         }
@@ -80,7 +86,7 @@ namespace slutuppgift.DATA
                 {
                     counter++;
                     Console.Write($"User:{user.Id,3}. {user.FirstName,-12} {user.LastName,-12} Password: {user.Card.Pin,12}\t");
-                    if (counter % 2 == 0) Console.WriteLine();
+                    if (counter % 1 == 0) Console.WriteLine();
                 }
             }
         }
@@ -88,14 +94,20 @@ namespace slutuppgift.DATA
         {
             using (var context = new Context())
             {
-                var books = context.Books;
+                var books = context.Books.Include(c => c.Card).ToList();
+
                 var counter = 0;
                 Console.WriteLine();
+
                 foreach (var book in books)
                 {
+                    var user = context.Users.Include(u => u.Card).FirstOrDefault(u => u.Card == book.Card);
+                    string status = "[Borrowed]";
+                    if (book.Borrowed == false) status = "[Available]";
                     counter++;
-                    Console.Write($"Book:{book.Id,3}. {book.Title,-36}");
-                    if (counter % 2 == 0) Console.WriteLine();
+                    Console.Write($"Book:{book.Id,3}. {book.Title,-36} Status:{status,11} ");
+                    if (user != null) Console.Write($"- ({user.Id}) {user.FirstName} {user.LastName}");
+                    if (counter % 1 == 0) Console.WriteLine();
                 }
             }
         }
@@ -104,11 +116,16 @@ namespace slutuppgift.DATA
         {
             using (var context = new Context())
             {
+                var authors = context.Authors.ToList();
+
+
                 Book book = new Book();
                 book.Year = rnd.Next(1900, 2023);
                 book.Borrowed = false;
                 book.Rating = new Random().Next(0, 5 + 1);
                 book.Title = GetEnumDescription(rnd.FromEnum<BookTitles>());
+                int numberOfAuthors = rnd.Next(1, authors.Count + 1);
+                book.Authors = authors.OrderBy(a => Guid.NewGuid()).Take(numberOfAuthors).ToList();
 
                 context.Books.Add(book);
                 context.SaveChanges();
@@ -216,19 +233,18 @@ namespace slutuppgift.DATA
         {
             using (var context = new Context())
             {
-                var user = context.Users.Include(p => p.Card).SingleOrDefault(p => p.Id == userId);
+                var user = context.Users.Include(c => c.Card).SingleOrDefault(p => p.Id == userId);
 
                 if (user == null)
                 {
                     Console.WriteLine("User:404");
                     return false;
                 }
+
                 var books = context.Books.Where(b => b.Card == user.Card).ToList();
                 foreach (var book in books)
                 {
-                    book.Borrowed = false;
-                    book.LoanDate = null;
-                    book.ReturnDate = null;
+                    ReturnBook(book.Id);
                 }
                 if (user.Card != null)
                 {
@@ -343,7 +359,7 @@ namespace slutuppgift.DATA
 
             for (int i = 0; i < textBytes.Length; i++)
             {
-                encryptedBytes[i] = (byte)(textBytes[i] ^ keyBytes[i%keyBytes.Length]);
+                encryptedBytes[i] = (byte)(textBytes[i] ^ keyBytes[i % keyBytes.Length]);
             }
             return Convert.ToBase64String(encryptedBytes);
         }

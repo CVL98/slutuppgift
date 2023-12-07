@@ -299,7 +299,7 @@ namespace slutuppgift
                             Console.WriteLine($"{"User id:",-9} {user.Id}");
                             Console.WriteLine($"{"Surname:",-9} {user.FirstName}");
                             Console.WriteLine($"{"Lastname:",-9} {user.LastName}");
-                            Console.WriteLine($"{"Password:",-9} {user.Card.Pin}");
+                            Console.WriteLine($"{"Password:",-9} {DataAccess.Decrypt(user.Card.Pin)}");
                             Console.Write("Borrowed books: ");
                             foreach (var book in books)
                             {
