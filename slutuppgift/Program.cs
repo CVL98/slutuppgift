@@ -29,8 +29,9 @@ namespace slutuppgift
                         var surname = Console.ReadLine();
                         Console.Write("\nEnter User lastname:");
                         var lastname = Console.ReadLine();
-                        Console.Write("\nCreate User pin:");
-                        if (surname.IsNullOrEmpty() || lastname.IsNullOrEmpty() || !int.TryParse(Console.ReadLine(), out int pin))
+                        Console.Write("\nCreate User pin [digits]:");
+                        var pin = Console.ReadLine();
+                        if (surname.IsNullOrEmpty() || lastname.IsNullOrEmpty() || pin.Length<4 || !pin.All(char.IsDigit))
                         {
                             DataAccess.Home("Invalid name or pin");
                             break;

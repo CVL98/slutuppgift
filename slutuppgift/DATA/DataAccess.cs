@@ -161,12 +161,12 @@ namespace slutuppgift.DATA
             }
 
         }
-        public void NewUser(string firstName, string lastName, int pin)
+        public void NewUser(string firstName, string lastName, string pin)
         {
             using (var context = new Context())
             {
                 Card card = new Card();
-                card.Pin = Encrypt(pin.ToString("D4"));
+                card.Pin = Encrypt(pin);
                 User user = new User();
                 user.FirstName = firstName;
                 user.LastName = lastName;
