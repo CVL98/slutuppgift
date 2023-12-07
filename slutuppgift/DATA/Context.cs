@@ -14,6 +14,7 @@ namespace slutuppgift.DATA
         public DbSet<Book> Books { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Card> Cards { get; set; }
+        public DbSet<History> Histories { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

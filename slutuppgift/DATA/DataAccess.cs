@@ -1,19 +1,24 @@
 ﻿using Helpers;
 using Microsoft.EntityFrameworkCore;
 using slutuppgift.MODELS;
+using System.Security.Cryptography;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Channels;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace slutuppgift.DATA
 {
     internal class DataAccess
     {
         csSeedGenerator rnd = new csSeedGenerator();
+        
+
         public enum BookTitles
         {
             [Description("Metro 2033")] Metro, [Description("Lord of the rings")] Lotr, [Description("Judge Dredd")] Dredd,
@@ -24,14 +29,16 @@ namespace slutuppgift.DATA
         public static void menu()
         {
 
-            Console.WriteLine("1. Fill 10");
-            Console.WriteLine("2. Add new author");
-            Console.WriteLine("3. Add new book");
-            Console.WriteLine("4. Add new user");
-            Console.WriteLine("5. List data");
-            Console.WriteLine("6. Borrow a book");
-            Console.WriteLine("7. Return a book");
-            Console.WriteLine("8. Remove data");
+            Console.WriteLine("\n1. Fill 10");
+            Console.WriteLine("2. Add new author--------");
+            Console.WriteLine("3. Add new book----------");
+            Console.WriteLine("4. Add new user----------");
+            Console.WriteLine("5. List data----[options]");
+            Console.WriteLine("6. User data------[Login]");
+            Console.WriteLine("7. Borrow a book---------");
+            Console.WriteLine("8. Return a book---------");
+            Console.WriteLine("9. Remove data---[opions]");
+            
 
         }
 
@@ -58,7 +65,7 @@ namespace slutuppgift.DATA
                 foreach (var author in authors)
                 {
                     counter++;
-                    Console.Write($"{author.Id,3}. {author.Name,-19}");
+                    Console.Write($"Author:{author.Id,3}. {author.Name,-19}");
                     if (counter % 3 == 0) Console.WriteLine();
                 }
             }
@@ -67,14 +74,14 @@ namespace slutuppgift.DATA
         {
             using (var context = new Context())
             {
-                var users = context.Users;
+                var users = context.Users.Include(c => c.Card);
                 var counter = 0;
                 Console.WriteLine();
                 foreach (var user in users)
                 {
                     counter++;
-                    Console.Write($"{user.Id,3}. {user.FirstName,10} {user.LastName,-11}");
-                    if (counter % 3 == 0) Console.WriteLine();
+                    Console.Write($"User:{user.Id,3}. {user.FirstName,-12} {user.LastName,-12} Password: {user.Card.Pin,12}\t");
+                    if (counter % 2 == 0) Console.WriteLine();
                 }
             }
         }
@@ -88,7 +95,7 @@ namespace slutuppgift.DATA
                 foreach (var book in books)
                 {
                     counter++;
-                    Console.Write($"{book.Id,3}. {book.Title,-36}");
+                    Console.Write($"Book:{book.Id,3}. {book.Title,-36}");
                     if (counter % 2 == 0) Console.WriteLine();
                 }
             }
@@ -114,7 +121,7 @@ namespace slutuppgift.DATA
             using (var context = new Context())
             {
                 Card card = new Card();
-                card.Pin = (new Random().Next(0, 9999)).ToString("D4");
+                card.Pin = Encrypt((new Random().Next(0, 9999)).ToString("D4"));
                 User user = new User();
                 user.FirstName = rnd.FirstName;
                 user.LastName = rnd.LastName;
@@ -138,12 +145,12 @@ namespace slutuppgift.DATA
             }
 
         }
-        public void NewUser(string firstName, string lastName)
+        public void NewUser(string firstName, string lastName, int pin)
         {
             using (var context = new Context())
             {
                 Card card = new Card();
-                card.Pin = (new Random().Next(0, 9999)).ToString("D4");
+                card.Pin = Encrypt(pin.ToString("D4"));
                 User user = new User();
                 user.FirstName = firstName;
                 user.LastName = lastName;
@@ -226,7 +233,7 @@ namespace slutuppgift.DATA
                 }
                 if (user.Card != null)
                 {
-                    
+
                     context.Cards.Remove(user.Card);
 
                 }
@@ -285,6 +292,14 @@ namespace slutuppgift.DATA
                     book.LoanDate = DateTime.Now;
                     book.ReturnDate = DateTime.Now.AddDays(14);
                     book.Borrowed = true;
+
+                    var History = new History
+                    {
+                        BorrowDate = DateTime.Now,
+                        UserId = userId,
+                        BookId = bookId
+                    };
+                    context.Histories.Add(History);
                     context.SaveChanges();
                     return true;
                 }
@@ -300,6 +315,13 @@ namespace slutuppgift.DATA
 
                 if (book != null)
                 {
+                    var borrowHistory = context.Histories.FirstOrDefault(bh => bh.BookId == bookId && bh.ReturnDate == null);
+
+                    if (borrowHistory != null)
+                    {
+                        borrowHistory.ReturnDate = DateTime.Now;
+                    }
+
                     book.Card = null;
                     book.LoanDate = null;
                     book.ReturnDate = null;
@@ -312,29 +334,32 @@ namespace slutuppgift.DATA
 
 
 
-        //public void NewUserCard(int id)
-        //{
-        //    using (var context = new Context())
-        //    {
-        //        var user = context.Users.Find(id);
+        public static string Encrypt(string text)
+        {
+            string key = "thisisnotakey";
+            byte[] textBytes = Encoding.UTF8.GetBytes(text);
+            byte[] keyBytes = Encoding.UTF8.GetBytes(key);
+            byte[] encryptedBytes = new byte[textBytes.Length];
 
-        //        if (user == null)
-        //        {
-        //            Console.WriteLine("User:404");
-        //            return;
-        //        }
+            for (int i = 0; i < textBytes.Length; i++)
+            {
+                encryptedBytes[i] = (byte)(textBytes[i] ^ keyBytes[i%keyBytes.Length]);
+            }
+            return Convert.ToBase64String(encryptedBytes);
+        }
+        public static string Decrypt(string text)
+        {
+            string key = "thisisnotakey";
+            byte[] textBytes = Convert.FromBase64String(text);
+            byte[] keyBytes = Encoding.UTF8.GetBytes(key);
+            byte[] encryptedBytes = new byte[textBytes.Length];
 
-        //        var card = new Card();
-        //        user.Card = card;
-        //        user.Card.Pin = (new Random().Next(0, 9999)).ToString("D4");
-
-        //        context.SaveChanges();
-        //    }
-        //}
-
-
-
-
+            for (int i = 0; i < textBytes.Length; i++)
+            {
+                encryptedBytes[i] = (byte)(textBytes[i] ^ keyBytes[i % keyBytes.Length]);
+            }
+            return Encoding.UTF8.GetString(encryptedBytes);
+        }
 
 
 

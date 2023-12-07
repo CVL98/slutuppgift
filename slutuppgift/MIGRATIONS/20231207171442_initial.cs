@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace slutuppgift.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialMigration : Migration
+    public partial class initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -106,6 +106,34 @@ namespace slutuppgift.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Histories",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    BorrowDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ReturnDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    BookId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Histories", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Histories_Books_BookId",
+                        column: x => x.BookId,
+                        principalTable: "Books",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Histories_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AuthorBook_BooksId",
                 table: "AuthorBook",
@@ -115,6 +143,16 @@ namespace slutuppgift.Migrations
                 name: "IX_Books_CardId",
                 table: "Books",
                 column: "CardId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Histories_BookId",
+                table: "Histories",
+                column: "BookId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Histories_UserId",
+                table: "Histories",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_CardId",
@@ -129,13 +167,16 @@ namespace slutuppgift.Migrations
                 name: "AuthorBook");
 
             migrationBuilder.DropTable(
-                name: "Users");
+                name: "Histories");
 
             migrationBuilder.DropTable(
                 name: "Authors");
 
             migrationBuilder.DropTable(
                 name: "Books");
+
+            migrationBuilder.DropTable(
+                name: "Users");
 
             migrationBuilder.DropTable(
                 name: "Cards");

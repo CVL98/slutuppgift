@@ -19,5 +19,6 @@ namespace slutuppgift.MODELS
         public string LastName { get; set; }
 
         public Card? Card { get; set; }
+        public ICollection<History> Histories { get; set; }
     }
 }

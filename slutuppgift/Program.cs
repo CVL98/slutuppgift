@@ -1,4 +1,6 @@
 ﻿using Helpers;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Identity.Client;
 using Microsoft.IdentityModel.Tokens;
 using slutuppgift.DATA;
@@ -33,14 +35,15 @@ namespace slutuppgift
                         var surname = Console.ReadLine();
                         Console.Write("\nEnter User lastname:");
                         var lastname = Console.ReadLine();
-                        if (surname.IsNullOrEmpty() || lastname.IsNullOrEmpty())
+                        Console.Write("\nCreate User pin:");
+                        if (surname.IsNullOrEmpty() || lastname.IsNullOrEmpty() || !int.TryParse(Console.ReadLine(), out int pin))
                         {
                             Console.Clear();
                             DataAccess.menu();
-                            Console.WriteLine("\nInvalid name");
+                            Console.WriteLine("\nInvalid name or pin");
                             break;
                         }
-                        access.NewUser(surname, lastname);
+                        access.NewUser(surname, lastname,pin);
                         Console.Clear();
                         DataAccess.menu();
                         Console.WriteLine($"\nUser \"{surname} {lastname}\" added.");
@@ -97,7 +100,7 @@ namespace slutuppgift
                             Console.Write(" added.\n");
                         }
                         break; //Enter book
-                    case 6:
+                    case 7:
                         Console.Clear();
                         DataAccess.menu();
                         Console.WriteLine();
@@ -144,7 +147,7 @@ namespace slutuppgift
                             break;
                         }
                         break; //Borrow Book
-                    case 7:
+                    case 8:
                         Console.Clear();
                         DataAccess.menu();
                         Console.WriteLine();
@@ -194,12 +197,15 @@ namespace slutuppgift
                         DataAccess.menu();
                         Console.WriteLine($"\nAuthor \"{fullname}\" added.");
                         break; //Enter Author
-                    case 8:
+                    case 9:
                         Console.Clear();
                         DataAccess.menu();
                         Console.WriteLine("\nRemove Author[1], Book[2], User[3] or clear all[4]?");
                         if (!int.TryParse(Console.ReadLine(), out int selection))
                         {
+                            Console.Clear();
+                            DataAccess.menu();
+                            Console.WriteLine();
                             Console.WriteLine("Invalid.");
                             break;
                         }
@@ -269,6 +275,12 @@ namespace slutuppgift
                                 DataAccess.menu();
                                 Console.WriteLine("\nAll data cleared.");
                                 break;
+                            default:
+                                Console.Clear();
+                                DataAccess.menu();
+                                Console.WriteLine();
+                                Console.WriteLine("Invalid option.");
+                                break;
                         }
                         break; //Remove Data
                     case 5:
@@ -277,6 +289,9 @@ namespace slutuppgift
                         Console.WriteLine("\nList Authors[1], Books[2], Users[3] or all[4]?");
                         if (!int.TryParse(Console.ReadLine(), out int listchoice))
                         {
+                            Console.Clear();
+                            DataAccess.menu();
+                            Console.WriteLine();
                             Console.WriteLine("Invalid.");
                             break;
                         }
@@ -309,8 +324,61 @@ namespace slutuppgift
                                 Console.WriteLine();
                                 DataAccess.menu();
                                 break;
+                            default:
+                                Console.Clear();
+                                DataAccess.menu();
+                                Console.WriteLine();
+                                Console.WriteLine("Invalid option.");
+                                break;
                         }
                         break; //List Data
+                    case 6:
+                        Console.Clear();
+                        DataAccess.menu();
+                        Console.WriteLine();
+                        access.ListUsers();
+
+                        Console.Write("\nEnter User id:");
+                        int.TryParse(Console.ReadLine(), out var userId);
+                        Console.Clear();
+                        DataAccess.menu();
+                        Console.WriteLine();
+                        if (userId == 0)
+                        {
+                            Console.Clear();
+                            DataAccess.menu();
+                            Console.WriteLine("\nInvalid user id");
+                            break;
+                        }
+                        Console.Write("Enter pin:");
+                        var password = Console.ReadLine();
+
+                        using (var context = new Context())
+                        {
+                            var user = context.Users.Include(c => c.Card).SingleOrDefault(p => p.Id == userId);
+                            var books = context.Books.Include(c => c.Card).Where(b => b.Card.Id == user.Card.Id);
+                            if (DataAccess.Decrypt(user.Card.Pin) != password)
+                            {
+                                Console.Clear();
+                                DataAccess.menu();
+                                Console.WriteLine();
+                                Console.WriteLine("Invalid pin.");
+                                break;
+                            }
+                            Console.Clear();
+                            DataAccess.menu();
+                            Console.WriteLine();
+                            Console.WriteLine($"{"User id:",-9} {user.Id}");
+                            Console.WriteLine($"{"Surname:",-9} {user.FirstName}");
+                            Console.WriteLine($"{"Lastname:",-9} {user.LastName}");
+                            Console.WriteLine($"{"Password:",-9} {user.Card.Pin}");
+                            Console.Write("Borrowed books: ");
+                            foreach (var book in books)
+                            {
+                                Console.Write($"({book.Id}) {book.Title}, ");
+                            }
+                        }
+                            break; //View user data
 
                     case 0:
                         Console.WriteLine("Exiting...");

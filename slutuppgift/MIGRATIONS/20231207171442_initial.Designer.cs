@@ -12,8 +12,8 @@ using slutuppgift.DATA;
 namespace slutuppgift.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20231206212932_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20231207171442_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -116,6 +116,35 @@ namespace slutuppgift.Migrations
                     b.ToTable("Cards");
                 });
 
+            modelBuilder.Entity("slutuppgift.MODELS.History", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BookId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("BorrowDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ReturnDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BookId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Histories");
+                });
+
             modelBuilder.Entity("slutuppgift.MODELS.User", b =>
                 {
                     b.Property<int>("Id")
@@ -168,6 +197,25 @@ namespace slutuppgift.Migrations
                     b.Navigation("Card");
                 });
 
+            modelBuilder.Entity("slutuppgift.MODELS.History", b =>
+                {
+                    b.HasOne("slutuppgift.MODELS.Book", "Book")
+                        .WithMany()
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("slutuppgift.MODELS.User", "User")
+                        .WithMany("Histories")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Book");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("slutuppgift.MODELS.User", b =>
                 {
                     b.HasOne("slutuppgift.MODELS.Card", "Card")
@@ -180,6 +228,11 @@ namespace slutuppgift.Migrations
             modelBuilder.Entity("slutuppgift.MODELS.Card", b =>
                 {
                     b.Navigation("Books");
+                });
+
+            modelBuilder.Entity("slutuppgift.MODELS.User", b =>
+                {
+                    b.Navigation("Histories");
                 });
 #pragma warning restore 612, 618
         }
