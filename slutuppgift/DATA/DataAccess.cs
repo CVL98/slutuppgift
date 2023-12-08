@@ -121,7 +121,9 @@ namespace slutuppgift.DATA
                 book.Borrowed = false;
                 book.Rating = new Random().Next(0, 5 + 1);
                 book.Title = GetEnumDescription(rnd.FromEnum<BookTitles>());
-                int numberOfAuthors = rnd.Next(1, authors.Count + 1);
+                int x = 2;
+                if (x<authors.Count) x=authors.Count;
+                int numberOfAuthors = rnd.Next(1, x + 1);
                 book.Authors = authors.OrderBy(a => Guid.NewGuid()).Take(numberOfAuthors).ToList();
 
                 context.Books.Add(book);
