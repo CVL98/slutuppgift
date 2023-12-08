@@ -30,7 +30,7 @@ namespace slutuppgift.DATA
             Console.WriteLine("6. User data------[Login]");
             Console.WriteLine("7. Borrow a book---------");
             Console.WriteLine("8. Return a book---------");
-            Console.WriteLine("9. Remove data---[opions]");
+            Console.WriteLine("9. Remove data--[options]");
 
 
         }
@@ -46,12 +46,9 @@ namespace slutuppgift.DATA
         {
             using (var context = new Context())
             {
-                for (int i = 0; i < number; i++)
-                {
-                    NewBook();
-                    NewUser();
-                    NewAuthor();
-                }
+                for (int i = 0; i < number; i++) NewAuthor();
+                for (int i = 0; i < number; i++) NewBook();
+                for (int i = 0; i < number; i++) NewUser();
             }
         }
 
@@ -69,7 +66,7 @@ namespace slutuppgift.DATA
                     Console.Write($"Author:{author.Id,3}. {author.Name,-19} Books: ");
                     foreach (var book in books)
                     {
-                        Console.Write($"({book.Id}), ");
+                        Console.Write($"({book.Id}),");
                     }
                     if (counter % 1 == 0) Console.WriteLine();
                 }
@@ -330,11 +327,11 @@ namespace slutuppgift.DATA
 
                 if (book != null)
                 {
-                    var borrowHistory = context.Histories.FirstOrDefault(bh => bh.BookId == bookId && bh.ReturnDate == null);
+                    var borrowHistory = context.Histories.FirstOrDefault(bh => bh.BookId == bookId && bh.Returned == null);
 
                     if (borrowHistory != null)
                     {
-                        borrowHistory.ReturnDate = DateTime.Now;
+                        borrowHistory.Returned = DateTime.Now;
                     }
 
                     book.Card = null;

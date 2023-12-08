@@ -127,7 +127,7 @@ namespace slutuppgift.Migrations
                     b.Property<DateTime>("BorrowDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("ReturnDate")
+                    b.Property<DateTime?>("Returned")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("UserId")

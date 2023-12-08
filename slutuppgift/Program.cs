@@ -25,13 +25,13 @@ namespace slutuppgift
                         DataAccess.Home("10 users, authors and books added");
                         break; //Fill 10
                     case 4:
-                        Console.Write("\nEnter User surname:");
+                        DataAccess.Home("Enter User surname:");
                         var surname = Console.ReadLine();
-                        Console.Write("\nEnter User lastname:");
+                        DataAccess.Home("Enter User lastname:");
                         var lastname = Console.ReadLine();
-                        Console.Write("\nCreate User pin [digits]:");
+                        DataAccess.Home("Create User pin [digits]:");
                         var pin = Console.ReadLine();
-                        if (surname.IsNullOrEmpty() || lastname.IsNullOrEmpty() || pin.Length<4 || !pin.All(char.IsDigit))
+                        if (surname.IsNullOrEmpty() || lastname.IsNullOrEmpty() || pin.Length < 4 || !pin.All(char.IsDigit))
                         {
                             DataAccess.Home("Invalid name or pin");
                             break;
@@ -306,6 +306,7 @@ namespace slutuppgift
                             {
                                 Console.Write($"({book.Id}) {book.Title}, ");
                             }
+                            Console.WriteLine();
                         }
                         break; //View user data
 

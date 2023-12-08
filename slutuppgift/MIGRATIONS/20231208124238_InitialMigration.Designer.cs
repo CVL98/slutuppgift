@@ -12,8 +12,8 @@ using slutuppgift.DATA;
 namespace slutuppgift.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20231207175458_initialmigration")]
-    partial class initialmigration
+    [Migration("20231208124238_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -130,7 +130,7 @@ namespace slutuppgift.Migrations
                     b.Property<DateTime>("BorrowDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("ReturnDate")
+                    b.Property<DateTime?>("Returned")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("UserId")
