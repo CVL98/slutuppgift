@@ -10,7 +10,7 @@ namespace slutuppgift.MODELS
         [Key]
         public int Id { get; set; }
 
-        public Guid Isbn { get; set; }
+        public Guid Isbn { get; set; } = Guid.NewGuid();
         [MaxLength(50)]
         public string Title { get; set; }
         public int Year { get; set; }
